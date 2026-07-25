@@ -15,8 +15,9 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC="$REPO_DIR/SKILL.md"
 
-# Cowork skills-plugin 底下的 earnings-scorecard skill（UUID 用 * 萬用）
-GLOB="$HOME/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/*/*/skills/earnings-scorecard/SKILL.md"
+# Cowork skills-plugin 根目錄；UUID 子層用 find 動態尋找。
+# 路徑含空格（"Application Support"），全程用引號與 -print0，勿改成裸 glob。
+PLUGIN_ROOT="$HOME/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin"
 
 DRY=0
 [[ "${1:-}" == "--dry" ]] && DRY=1
@@ -26,10 +27,13 @@ if [[ ! -f "$SRC" ]]; then
   exit 1
 fi
 
-# 展開 glob（可能 0、1 或多個）
-shopt -s nullglob
-targets=( $GLOB )
-shopt -u nullglob
+# 用 find -print0 + mapfile 收集目標，安全處理帶空格的路徑
+targets=()
+if [[ -d "$PLUGIN_ROOT" ]]; then
+  while IFS= read -r -d '' t; do
+    targets+=( "$t" )
+  done < <(find "$PLUGIN_ROOT" -type f -path "*/skills/earnings-scorecard/SKILL.md" -print0 2>/dev/null)
+fi
 
 if (( ${#targets[@]} == 0 )); then
   echo "✗ 沒找到 Cowork 的 earnings-scorecard skill。" >&2
