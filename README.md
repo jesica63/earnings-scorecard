@@ -1,7 +1,11 @@
 # earnings-scorecard — 美股財報檢核 Scorecard 系統
 
 這個 repo 是 `earnings-scorecard` skill 的**唯一真本（canonical source）**。
-`SKILL.md` 是完整、自足的單檔 skill，支援美股＋台股財報檢核。
+skill 由 `SKILL.md`（框架與路由邏輯）＋ 四個產業子模組（`semiconductor.md`、
+`platform.md`、`software.md`、`consumer-tech.md`）＋ `財報Scorecard-備料SOP.md`
+共 6 個檔案組成，同層相對路徑引用，缺一不可，並非單檔自足。
+`SKILL.md` 第一步的公司識別路由表與文末 Note 都會依公司類別載入對應子模組，
+全文對子模組的引用有 20 餘處。
 
 ## 為什麼有這個 repo（背景）
 
@@ -9,33 +13,53 @@
 
 | 位置 | 形態 | 狀態 |
 |------|------|------|
-| `~/skills/美股財報檢核SKILL/`（Obsidian vault） | 子模組式、缺 SKILL.md | 舊架構，已封存到該資料夾的 `archive/legacy-skill/` |
-| `~/.codex/skills/earnings-scorecard/` | 子模組式 | 最舊（2026-05），未使用（沒在用 Codex） |
-| Cowork（local-agent-mode）skills-plugin | 22KB 單檔 | 實際被載入、最新（2026-06-13） |
+| `~/skills/美股財報檢核SKILL/`（Obsidian vault）`archive/legacy-skill/` | 子模組式（無 SKILL.md） | 四個子模組與備料 SOP 的**來源**；`platform.md`、`software.md` 是最新版（mtime 2026-06-12），較 codex 版（2026-05-15）多出「調整後潛在營業利益率（白話估值法）」一段，含各公司維持性 R&D／S&M 參數，本 repo 已採用 |
+| `~/.codex/skills/earnings-scorecard/` | 子模組式 | 較舊（2026-05），未使用（沒在用 Codex） |
+| Cowork（local-agent-mode）skills-plugin | 目錄式，缺子模組 | 實際被載入；曾經只同步了 SKILL.md，導致找不到 `software.md` 等子模組 |
 
-結果是：在 vault 改門檻，但實際載入的是 Cowork 那份，改了沒生效。
-本 repo 以 **Cowork 6/13 單檔版**為基準建立，終結漂移。
+結果是：在 vault 改門檻，但實際載入的是 Cowork 那份，改了沒生效；且 Cowork
+那份長期缺子模組，同一份財報在不同來源下算出不同參數。
+本 repo 以 **Cowork 6/13 SKILL.md 版 ＋ legacy 目錄的四個子模組與備料 SOP**
+為基準補齊，終結漂移與缺檔問題。
 
 ## 更新流程（務必照這個走）
 
 ```bash
 cd ~/skills/earnings-scorecard
-# 1. 改 SKILL.md（門檻、Peer 配對、Regime 加權等）
+# 1. 改 SKILL.md 或任一子模組（門檻、Peer 配對、Regime 加權等）
 # 2. 版控
-git add SKILL.md && git commit -m "說明改了什麼" && git push
-# 3. 同步到 Cowork 實際載入的位置
-./sync-to-cowork.sh          # 覆蓋前自動備份；--dry 可先預覽
+git add SKILL.md software.md ...（依實際改動的檔案）
+git commit -m "說明改了什麼" && git push
+# 3. 同步整個 skill 目錄到 Cowork 實際載入的位置
+./sync-to-cowork.sh          # SKILL.md ＋ 四個子模組 ＋ 備料 SOP，覆蓋前自動備份；--dry 可先預覽
 ```
 
 ## 不要做的事
 
-- ❌ 不要在 `~/skills/美股財報檢核SKILL/` 改 skill——那裡已經沒有 skill 檔，只是資料/封存夾。
+- ❌ 不要在 `~/skills/美股財報檢核SKILL/archive/legacy-skill/` 改 skill——那裡是唯讀來源，改了不會同步回本 repo，只會製造新的漂移。
 - ❌ 不要直接編輯 Cowork 的 Library 路徑——它由 Cowork 管、會被覆蓋。改這裡、用腳本同步過去。
+- ❌ 不要只同步 SKILL.md 而漏掉子模組——舊版腳本這樣做過，導致 Cowork 端找不到 `software.md`。
 
 ## sync-to-cowork.sh
 
-用 `find -print0` 動態尋找 Cowork 的 skill 路徑（不寫死 session UUID，Cowork 重生路徑也找得到），
-覆蓋前備份 `.bak-時間戳`，內容一致則略過。找不到目標會明確報錯。
+用 `find -print0` 動態尋找 Cowork 的 skill **目錄**（不寫死 session UUID，Cowork
+重生路徑也找得到），對目錄內 SKILL.md ＋ 四個子模組 ＋ 備料 SOP 逐檔獨立比對、
+獨立備份（`.bak-時間戳`）、獨立複製；內容一致則略過。找不到目標會明確報錯。
+
+## 待處理：兩個估值錨點需重校
+
+2026-07-30 實跑 MSFT FY26 Q4 時發現的落差，尚未校正，先記錄：
+
+- `software.md` 層五的 EV/Adj. EBITDA 歷史中位數寫 **22x**，Bear 情境 17–19x。
+- `software.md` 白話估值法段的 Microsoft 特別說明寫「遠期 PE（調整後）落在
+  **25–30x**」屬市場對 AI 投資成本的誤讀折扣。
+- 實跑結果：以 2026-07-29 收盤價 390.54 計算，forward EV/Adj. EBITDA 為
+  **12.1x**、遠期 PE 為 **14.2x**——約為兩個錨點的一半。
+- 兩個獨立錨點（EV/EBITDA 中位數、遠期 PE 區間）同向偏離，研判錨點校準於
+  較高估值環境，需人工重校後才能用於推導目標價，暫不可直接引用這兩個數字
+  做估值判斷。
+- 調整後潛在營業利益率算出 50.52%，落在 software.md 預期的 50–55% 區間內，
+  計算方法（公式與參數）本身無誤，問題只在估值錨點過時。
 
 ---
-*Repo: jesica63/earnings-scorecard（private）。最後更新：2026-07-25*
+*Repo: jesica63/earnings-scorecard（private）。最後更新：2026-07-30*
