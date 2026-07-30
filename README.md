@@ -16,7 +16,7 @@
 |------|------|------|
 | `~/Documents/skills/美股財報檢核SKILL/archive/legacy-skill/`（Obsidian vault） | 子模組式（無 SKILL.md） | 四個子模組與備料 SOP 的**來源**；`platform.md`、`software.md` 是最新版（mtime 2026-06-12），較 codex 版（2026-05-15）多出「調整後潛在營業利益率（白話估值法）」一段，含各公司維持性 R&D／S&M 參數，本 repo 已採用 |
 | `~/.codex/skills/earnings-scorecard/` | 子模組式 | 較舊（2026-05），未使用（沒在用 Codex） |
-| Cowork（local-agent-mode）skills-plugin | 目錄式，缺子模組 | 實際被載入；曾經只同步了 SKILL.md，導致找不到 `software.md` 等子模組 |
+| Cowork（local-agent-mode）skills-plugin | 帳號端 user skill 的本機投影 | 實際被載入。2026-07-30 前只有 SKILL.md，導致找不到 `software.md` 等子模組；同日帳號端換為多檔版後已補齊五個檔 |
 
 結果是：在 vault 改門檻，但實際載入的是 Cowork 那份，改了沒生效；且 Cowork
 那份長期缺子模組，同一份財報在不同來源下算出不同參數。
@@ -31,9 +31,27 @@ cd ~/skills/earnings-scorecard
 # 2. 版控
 git add SKILL.md software.md ...（依實際改動的檔案）
 git commit -m "說明改了什麼" && git push
-# 3. 同步整個 skill 目錄到 Cowork 實際載入的位置
-./sync-to-cowork.sh          # SKILL.md ＋ 四個子模組 ＋ 備料 SOP，覆蓋前自動備份；--dry 可先預覽
 ```
+
+**3. 讓改動生效——優先走帳號端換版，不是跑腳本。**
+
+實際載入的 skill 是**帳號端（Claude 帳號）的 user skill**，Cowork 那個帶 session UUID 的目錄
+只是它的本機投影，會被自動重建，直接在那裡改檔會被沖掉。
+
+2026-07-30 起帳號端已改為**多檔版本**（SKILL.md ＋ 四個子模組），流程：
+
+1. 開 `https://claude.ai/customize/skills`
+2. 找 `earnings-scorecard`
+3. ⋮ → **Replace**，上傳含 `earnings-scorecard/` 資料夾的 zip（SKILL.md ＋ 四個子模組）
+4. 驗證：`ls "$HOME/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin"/*/*/skills/earnings-scorecard/`
+   應看到 5 個 `.md`
+
+> ⚠️ 實測（2026-07-30）：換版後 **skillId 會變**（`skill_0182eSWa5Qs1j4bmUsbgNjB6` → `skill_01JmvMBrmpuKaT3Fs5hbXCAA`），
+> 但 `name` 與 `enabled` 保留、manifest 無重複條目、呼叫名 `anthropic-skills:earnings-scorecard` 不受影響。
+> **驗證換版成功要看 name 與檔案清單，不要看 skillId。**
+
+**`./sync-to-cowork.sh` 現已降為備援**，只在下列情況用：帳號端還沒換版、或要臨時覆蓋本機投影做測試。
+帳號端既已自帶子模組，正常維護不需要跑它（跑了會對五個檔全部回報「已一致，略過」）。
 
 ## 不要做的事
 
