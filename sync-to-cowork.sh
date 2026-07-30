@@ -31,7 +31,16 @@ FILES=(
 PLUGIN_ROOT="$HOME/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin"
 
 DRY=0
-[[ "${1:-}" == "--dry" ]] && DRY=1
+case "${1:-}" in
+  "")     DRY=0 ;;
+  --dry)  DRY=1 ;;
+  *)
+    # 打錯參數（--dryrun、-dry、--dry-run…）不可靜默進入實際覆蓋模式
+    echo "✗ 未知參數：$1" >&2
+    echo "  用法：$(basename "$0") [--dry]" >&2
+    exit 64
+    ;;
+esac
 
 for f in "${FILES[@]}"; do
   if [[ ! -f "$REPO_DIR/$f" ]]; then

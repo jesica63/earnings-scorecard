@@ -1,11 +1,12 @@
 # earnings-scorecard — 美股財報檢核 Scorecard 系統
 
 這個 repo 是 `earnings-scorecard` skill 的**唯一真本（canonical source）**。
-skill 由 `SKILL.md`（框架與路由邏輯）＋ 四個產業子模組（`semiconductor.md`、
-`platform.md`、`software.md`、`consumer-tech.md`）＋ `財報Scorecard-備料SOP.md`
-共 6 個檔案組成，同層相對路徑引用，缺一不可，並非單檔自足。
-`SKILL.md` 第一步的公司識別路由表與文末 Note 都會依公司類別載入對應子模組，
-全文對子模組的引用有 20 餘處。
+**載入依賴：** `SKILL.md`（框架與路由邏輯）＋ 四個產業子模組（`semiconductor.md`、
+`platform.md`、`software.md`、`consumer-tech.md`），同層相對路徑引用，**缺一不可，並非單檔自足**。
+`SKILL.md` 第一步的公司識別路由表（第 61–64 行）與文末 Note（第 470 行）都會依公司類別載入對應子模組。
+
+**附帶文件：** `財報Scorecard-備料SOP.md` 是人工備料的作業流程，`SKILL.md` 並未引用它，
+不屬載入依賴，但同步過去方便查閱。
 
 ## 為什麼有這個 repo（背景）
 
@@ -13,7 +14,7 @@ skill 由 `SKILL.md`（框架與路由邏輯）＋ 四個產業子模組（`semi
 
 | 位置 | 形態 | 狀態 |
 |------|------|------|
-| `~/skills/美股財報檢核SKILL/`（Obsidian vault）`archive/legacy-skill/` | 子模組式（無 SKILL.md） | 四個子模組與備料 SOP 的**來源**；`platform.md`、`software.md` 是最新版（mtime 2026-06-12），較 codex 版（2026-05-15）多出「調整後潛在營業利益率（白話估值法）」一段，含各公司維持性 R&D／S&M 參數，本 repo 已採用 |
+| `~/Documents/skills/美股財報檢核SKILL/archive/legacy-skill/`（Obsidian vault） | 子模組式（無 SKILL.md） | 四個子模組與備料 SOP 的**來源**；`platform.md`、`software.md` 是最新版（mtime 2026-06-12），較 codex 版（2026-05-15）多出「調整後潛在營業利益率（白話估值法）」一段，含各公司維持性 R&D／S&M 參數，本 repo 已採用 |
 | `~/.codex/skills/earnings-scorecard/` | 子模組式 | 較舊（2026-05），未使用（沒在用 Codex） |
 | Cowork（local-agent-mode）skills-plugin | 目錄式，缺子模組 | 實際被載入；曾經只同步了 SKILL.md，導致找不到 `software.md` 等子模組 |
 
@@ -36,7 +37,7 @@ git commit -m "說明改了什麼" && git push
 
 ## 不要做的事
 
-- ❌ 不要在 `~/skills/美股財報檢核SKILL/archive/legacy-skill/` 改 skill——那裡是唯讀來源，改了不會同步回本 repo，只會製造新的漂移。
+- ❌ 不要在 `~/Documents/skills/美股財報檢核SKILL/archive/legacy-skill/` 改 skill——那裡是唯讀來源，改了不會同步回本 repo，只會製造新的漂移。
 - ❌ 不要直接編輯 Cowork 的 Library 路徑——它由 Cowork 管、會被覆蓋。改這裡、用腳本同步過去。
 - ❌ 不要只同步 SKILL.md 而漏掉子模組——舊版腳本這樣做過，導致 Cowork 端找不到 `software.md`。
 
