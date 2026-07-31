@@ -1,9 +1,10 @@
 # earnings-scorecard — 美股財報檢核 Scorecard 系統
 
 這個 repo 是 `earnings-scorecard` skill 的**唯一真本（canonical source）**。
-**載入依賴：** `SKILL.md`（框架與路由邏輯）＋ 四個產業子模組（`semiconductor.md`、
-`platform.md`、`software.md`、`consumer-tech.md`），同層相對路徑引用，**缺一不可，並非單檔自足**。
-`SKILL.md` 第一步的公司識別路由表（第 61–64 行）與文末 Note（第 470 行）都會依公司類別載入對應子模組。
+**載入依賴：** `SKILL.md`（框架與路由邏輯）＋ 五個產業子模組（`semiconductor.md`、
+`platform.md`、`software.md`、`consumer-tech.md`、`optical-networking.md`），同層相對路徑引用，**缺一不可，並非單檔自足**。
+`SKILL.md` 第一步的公司識別路由表與文末 Note 都會依公司類別載入對應子模組。
+（更新：2026-07-31，新增光通訊子模組 `optical-networking.md`，適用 AAOI；行號改為不寫死，避免每次改檔就過時）
 
 **附帶文件：** `財報Scorecard-備料SOP.md` 是人工備料的作業流程，`SKILL.md` 並未引用它，
 不屬載入依賴，但同步過去方便查閱。
@@ -38,20 +39,20 @@ git commit -m "說明改了什麼" && git push
 實際載入的 skill 是**帳號端（Claude 帳號）的 user skill**，Cowork 那個帶 session UUID 的目錄
 只是它的本機投影，會被自動重建，直接在那裡改檔會被沖掉。
 
-2026-07-30 起帳號端已改為**多檔版本**（SKILL.md ＋ 四個子模組），流程：
+2026-07-30 起帳號端已改為**多檔版本**（SKILL.md ＋ 子模組），流程：
 
 1. 開 `https://claude.ai/customize/skills`
 2. 找 `earnings-scorecard`
-3. ⋮ → **Replace**，上傳含 `earnings-scorecard/` 資料夾的 zip（SKILL.md ＋ 四個子模組）
+3. ⋮ → **Replace**，上傳含 `earnings-scorecard/` 資料夾的 zip（SKILL.md ＋ 五個子模組）
 4. 驗證：`ls "$HOME/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin"/*/*/skills/earnings-scorecard/`
-   應看到 5 個 `.md`
+   應看到 6 個 `.md`（SKILL.md ＋ 五個子模組）
 
 > ⚠️ 實測（2026-07-30）：換版後 **skillId 會變**（`skill_0182eSWa5Qs1j4bmUsbgNjB6` → `skill_01JmvMBrmpuKaT3Fs5hbXCAA`），
 > 但 `name` 與 `enabled` 保留、manifest 無重複條目、呼叫名 `anthropic-skills:earnings-scorecard` 不受影響。
 > **驗證換版成功要看 name 與檔案清單，不要看 skillId。**
 
 **`./sync-to-cowork.sh` 現已降為備援**，只在下列情況用：帳號端還沒換版、或要臨時覆蓋本機投影做測試。
-帳號端既已自帶子模組，正常維護不需要跑它（跑了會對五個檔全部回報「已一致，略過」）。
+帳號端既已自帶子模組，正常維護不需要跑它（跑了會對既有檔案回報「已一致，略過」）。
 
 ## 不要做的事
 
@@ -62,7 +63,7 @@ git commit -m "說明改了什麼" && git push
 ## sync-to-cowork.sh
 
 用 `find -print0` 動態尋找 Cowork 的 skill **目錄**（不寫死 session UUID，Cowork
-重生路徑也找得到），對目錄內 SKILL.md ＋ 四個子模組 ＋ 備料 SOP 逐檔獨立比對、
+重生路徑也找得到），對目錄內 SKILL.md ＋ 五個子模組 ＋ 備料 SOP 逐檔獨立比對、
 獨立備份（`.bak-時間戳`）、獨立複製；內容一致則略過。找不到目標會明確報錯。
 
 ## 待處理：兩個估值錨點需重校
@@ -81,4 +82,4 @@ git commit -m "說明改了什麼" && git push
   計算方法（公式與參數）本身無誤，問題只在估值錨點過時。
 
 ---
-*Repo: jesica63/earnings-scorecard（private）。最後更新：2026-07-30*
+*Repo: jesica63/earnings-scorecard（private）。最後更新：2026-07-31*
