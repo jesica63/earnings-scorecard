@@ -1,6 +1,6 @@
 ---
 name: earnings-scorecard
-description: 美股財報檢核 Scorecard 系統。用戶提到「幫我看財報」「檢核這季表現」「分析 NVDA / AMD / TSM / Google / Meta / Netflix / Uber / Microsoft / Apple 財報」「做 Scorecard」「財報出來了幫我打分」時觸發。支援半導體、平台、軟體、消費電子四大產業類別，輸出含 Regime 加權、Peer Delta、EV/EBITDA 估值的完整檢核表與分析摘要。
+description: 美股財報檢核 Scorecard 系統。用戶提到「幫我看財報」「檢核這季表現」「分析 NVDA / AMD / TSM / Google / Meta / Netflix / Uber / Microsoft / Apple / AAOI 財報」「做 Scorecard」「財報出來了幫我打分」時觸發。支援半導體、平台、軟體、消費電子、光通訊五大產業類別，輸出含 Regime 加權、Peer Delta、EV/EBITDA（光通訊改用 EV/Sales）估值的完整檢核表與分析摘要。
 ---
 
 # Earnings Scorecard — 美股財報檢核系統
@@ -62,7 +62,12 @@ description: 美股財報檢核 Scorecard 系統。用戶提到「幫我看財�
 | Google（Alphabet）、Meta、Netflix、Uber | 平台 | `platform.md` |
 | Microsoft | 軟體 | `software.md` |
 | Apple | 消費電子 | `consumer-tech.md` |
+| AAOI（Applied Optoelectronics） | 光通訊／光元件 | `optical-networking.md` |
 | 其他公司 | — | 告知使用者目前不在支援清單，詢問是否用通用框架處理 |
+
+> **光通訊模組的特別說明（更新：2026-07-31，新增 AAOI）：** AAOI 屬爬坡期虧損公司，毛利率約 30%、FCF 為負、
+> 估值用 EV/Sales 而非 EV/EBITDA，**不可套用半導體子模組的門檻**。Lumentum（LITE）、Coherent（COHR）、
+> Fabrinet（FN）等光元件廠若日後納入，同樣走此模組。
 
 載入子模組後，繼續執行本文件的第二步與第三步，再進入子模組定義的分析流程。
 
@@ -122,6 +127,10 @@ web_search：VIX index current [當前年月]
 ## 第二點五步：白話投資估值法｜為什麼科技股 PE 100 倍不一定貴？
 
 > **使用時機：** 每次分析科技成長股時，在估值定價層（層五）開頭自動套用此框架。若使用者首次接觸本概念，可額外輸出一段白話解釋。
+>
+> **例外（更新：2026-07-31，因新增光通訊模組）：** 若子模組明文聲明跳過本框架，依子模組為準。
+> 目前 `optical-networking.md` 跳過——該類公司的虧損來自製造端毛利不足與產能爬坡，不是超額 R&D／S&M，
+> 還原「潛在營業利益率」會得出假的樂觀結論。
 
 ### 傳統會計準則對科技股的系統性扭曲
 
@@ -216,6 +225,9 @@ EV/Adj. EBITDA 本質上已剔除大部分 GAAP 扭曲（折舊攤銷、SBC、�
 ## 第三步：共用估值框架
 
 所有公司均使用以下工具定價，P/E 降為輔助參考。
+
+> **例外（更新：2026-07-31，因新增光通訊模組）：** `optical-networking.md` 的公司 EBITDA 為負或趨近於零，
+> EV/Adj. EBITDA 不具意義，主要估值工具改為 EV/Sales，詳見該子模組層五；待 Adj. EBITDA 連續兩季為正後才切回本節工具。
 
 ### 主要工具一：EV / Adj. EBITDA
 
@@ -467,4 +479,4 @@ web_search 取得當季市場共識 EPS（若有）
 ## Note
 
 本文件描述的是框架與路由邏輯。各產業的具體指標、門檻、Peer 配對定義在子模組中。
-子模組路徑：`semiconductor.md` / `platform.md` / `software.md` / `consumer-tech.md`
+子模組路徑：`semiconductor.md` / `platform.md` / `software.md` / `consumer-tech.md` / `optical-networking.md`

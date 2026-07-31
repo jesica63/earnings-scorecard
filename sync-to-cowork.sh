@@ -16,13 +16,16 @@ set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# 要同步的檔案：SKILL.md ＋ 四個子模組 ＋ 備料 SOP
+# 要同步的檔案：SKILL.md ＋ 五個子模組 ＋ 備料 SOP
+# （更新：2026-07-31，新增 optical-networking.md；新增子模組時務必同步補進本清單，
+#   否則 Cowork 端的路由表會指向不存在的檔案）
 FILES=(
   "SKILL.md"
   "semiconductor.md"
   "platform.md"
   "software.md"
   "consumer-tech.md"
+  "optical-networking.md"
   "財報Scorecard-備料SOP.md"
 )
 
