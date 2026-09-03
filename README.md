@@ -81,5 +81,15 @@ git commit -m "說明改了什麼" && git push
 - 調整後潛在營業利益率算出 50.52%，落在 software.md 預期的 50–55% 區間內，
   計算方法（公式與參數）本身無誤，問題只在估值錨點過時。
 
+## tools/edgar-fetch/ — SEC EDGAR 原文抓取工具
+
+配合第零步「資料盤點與等級判定」使用，用 `edgartools` 套件直接讀 SEC EDGAR 的 XBRL
+結構化財報，取代手動複製貼上或 web_search 拼湊二手數字，能讓報告盡量往 A 級靠。
+含 `fetch_filing.py`（抓三張表）與 `grep_filing.py`（全文搜尋客戶集中度、股數變化等
+藏在附注的揭露）。使用方式見 `tools/edgar-fetch/README.md`。
+
+**執行順序**：先跑這裡的工具抓原文 → 原文沒有的部分（Peer 數字、Regime 判定、當日股價、
+市場共識 EPS）才用 web_search 補。不要跳過這一步直接 web_search。
+
 ---
-*Repo: jesica63/earnings-scorecard（private）。最後更新：2026-07-31*
+*Repo: jesica63/earnings-scorecard（private）。最後更新：2026-09-03*
